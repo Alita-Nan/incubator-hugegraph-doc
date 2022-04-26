@@ -1,47 +1,53 @@
 ## HugeGraph Java Client
 
-本文的代码都是`java`语言写的，但其风格与`gremlin(groovy)`是非常类似的。用户只需要把代码中的变量声明替换成`def`或直接去掉，
-就能将`java`代码转变为`groovy`；另外就是每一行语句最后可以不加分号，`groovy`认为一行就是一条语句。
-用户在`HugeGraph-Studio`中编写的`gremlin(groovy)`可以参考本文的`java`代码，下面会举出几个例子。
+The code in this article is written in `java`, but its style is very similar to `gremlin(groovy)`. You only needs to replace the variable declaration in the code with `def` or remove it directly. Then you can convert it into `groovy`. In addition, each line of statement can be without a semicolon at the end cause `groovy` considers a line to be a statement.
+
+When you want to write `gremlin(groovy)` in `HugeGraph-Studio`, you can refer to the java code of this article. A few examples will be given blow.
 
 ### 1 HugeGraph-Client
 
-HugeGraph-Client 是操作 graph 的总入口，用户必须先创建出 HugeGraph-Client 对象，与 HugeGraph-Server 建立连接（伪连接）后，才能获取到 schema、graph 以及 gremlin 的操作入口对象。
+HugeGraph-Client is the key for operating graph. You must first create a HugeGraph-Client object and establish a connection (pseudo connection) with HugeGraph-Server before you can obtain an object to operate the schema, graph and gremlin.
 
-目前 HugeGraph-Client 只允许连接服务端已存在的图，无法自定义图进行创建。其创建方法如下：
+Currently, HugeGraph-Client only allows connections to existing graphs on the server, which means you can't use it to create a new graph. Its creation method is as follows:
 
 ```java
-// HugeGraphServer地址："http://localhost:8080"
-// 图的名称："hugegraph"
+// Address of HugeGraphServer："http://localhost:8080"
+// Name of graph："hugegraph"
 HugeClient hugeClient = HugeClient.builder("http://localhost:8080", "hugegraph")
-                                  .configTimeout(20) // 默认 20s 超时
-                                  .configUser("**", "**") // 默认未开启用户权限
+                                  .configTimeout(20) // Default 20s timeout
+                                  .configUser("**", "**") // User permissions are not enabled by default
                                   .build();
 ```
 
-上述创建 HugeClient 的过程如果失败会抛出异常，用户需要try-catch。如果成功则继续获取 schema、graph 以及 gremlin 的 manager。
+If the above process of creating HugeClient fails, an exception will be thrown, so you should  surround it by try-catch. If successful, continue to get schema, graph and gremlin manager.
 
-在`HugeGraph - Hubble / Studio`中通过`gremlin`来操作时，不需要使用`HugeClient`，可以忽略。
+🏷️ When operating through `gremlin` in `HugeGraph - Hubble/Studio`, `HugeClient` is not required and can be ignored.
 
-### 2 元数据
+### 2 MetaData
 
 #### 2.1 SchemaManager
 
-SchemaManager 用于管理 HugeGraph 中的四种元数据，分别是PropertyKey（属性类型）、VertexLabel（顶点类型）、EdgeLabel（边类型）和 IndexLabel（索引标签）。在定义元数据信息之前必须先创建 SchemaManager 对象。
+~~SchemaManager 用于管理 HugeGraph 中的四种元数据，分别是PropertyKey（属性类型）、VertexLabel（顶点类型）、EdgeLabel（边类型）和 IndexLabel（索引标签）。在定义元数据信息之前必须先创建 SchemaManager 对象。~~
 
-用户可使用如下方法获得SchemaManager对象：
+SchemaManager is used to manage four kinds of metadata in HugeGraph, which is  PropertyKey (property type), VertexLabel (vertex type), EdgeLabel (edge type) and IndexLabel (index label). Metadata information can be defined only when a SchemaManager object has been created.
+
+~~用户可使用如下方法获得SchemaManager对象：~~
+
+You can use the following method to obtain the SchemaManager object.
 
 ```java
 SchemaManager schema = hugeClient.schema()
 ```
 
-在`HugeGraph-Studio`中通过`gremlin`创建`schema`对象：
+~~在`HugeGraph-Studio`中通过`gremlin`创建`schema`对象：~~
+
+Using `gremlin` to create `schema` in `HugeGraph-Studio`:
 
 ```groovy
 schema = graph.schema()
 ```
 
-下面分别对三种元数据的定义过程进行介绍。
+The definition process of the three kinds of metadata is described below.
 
 #### 2.2 PropertyKey
 
